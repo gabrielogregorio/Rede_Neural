@@ -1,6 +1,23 @@
 # Aviso
 Esse é um projeto experimental apenas para estudos. 
 
+# Objetivos
+Desenvolvimento de uma rede neural própria para estudos de redes neurais artificias.
+
+# Como usar?
+
+Você deve fornecer um conjunto de entradas e saídas para a rede, treiná-la, verificar o funcionamento e então otimizar a rede. Então você terá um modelo funcional. Dicas:
+
+* Uma rede pequena pode resolver o seu problema
+* Uma rede grande pode tornar impossível o aprendizado.
+* Pesos pequenos podem ser perfeitos
+* Por ser aleatório, pode ser que você tenha péssimos resultados nas primeira execuções
+* Execute o treino 10, 20 vezes se necessário, até chegar bem perto do resultado esperado.
+* É bem improvável um resultado perfeito.
+* Pode ser que os seus dados não tenham lógica
+* Pode ser que esse modelo não atenda a sua necessidade!
+* Esse projeto é para estudos!
+
 # Como Treinar a rede
 Para fazer o treinamento dessa rede, é necessário ter um conjunto de dados de entradas, relacionando com os dados de saídas.
 
