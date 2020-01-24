@@ -6,8 +6,7 @@ Para fazer o treinamento dessa rede, é necessário ter um conjunto de dados de 
 
 Também é necessário informar a rede. Vamos direto ao ponto.
 
-´´´python
-
+```Python
 # Importe a biblioteca de treino
 from neural import Treino
 
@@ -32,10 +31,10 @@ script = Treino(rede, intervalorMenor, intervaloMaior, esperado, entradas, gerac
 
 # Retorna a melhor rede dentre as 1000. Execute até encontrar o resultado mais próximo do esperado. Depois teste a rede com outros valores, para garantir que a rede está funcionando
 print(script.treinarRede())
-´´´
-# Como testar uma rede
-´´´python
+```
 
+# Como testar uma rede
+```Python
 # Importe a biblioteca
 from neural import RedeNeural
 
@@ -53,12 +52,12 @@ instancia = RedeNeural(rede, entradas, pesos)
 
 # Exiba a saida associada aos pesos, a rede e as entradas
 print(instancia.iniciar())
-´´´
+```
 
 # Como otimizar a rede
 Uma vez que a rede está se aproximando dos valores esperados, mesmo com multiplos testes, nós precisamos otimizar a rede, para deixa-la mais exata. Como fazer isso?
 
-´´´Python
+```Python
 # Importe a classe otimizar
 from neural import Otimizar
 
@@ -85,4 +84,6 @@ instancia = Otimizar(rede, esperado, entradas, geracoesOtimizacao, melhorPeso, o
 
 # Chame o método e ele retornará o melhor peso otimizado desta execução.
 print(instancia.otimizarRede())
-´´´
+```
+
+
