@@ -4,7 +4,7 @@ Esse é um projeto experimental apenas para estudos.
 # Como Treinar a rede
 Para fazer o treinamento dessa rede, é necessário ter um conjunto de dados de entradas, relacionando com os dados de saidas.
 
-Também é necessário informar a rede. Vamos direto ao ponto.
+Também é necessário informar a rede com os neurônios que você quer usar. Vamos direto ao ponto.
 
 ```Python
 # Importe a biblioteca de treino
