@@ -1,6 +1,5 @@
 from math import sqrt
-from random import randint
-
+from random import randint, uniform, choice
 
 class RedeNeural():
     def __init__(self, rede, entradas, pesos):
@@ -8,175 +7,329 @@ class RedeNeural():
         self.pesos = pesos
         self.rede = rede
 
-    def iniciar(self):
-        '''Inicia uma rede neural'''
-
-        return RedeNeural.rede(self)
-
     def neuronio(peso, entradas):
         '''Neurônio individual'''
+        soma = 0
 
-        resultado = sum(entradas) * sqrt(peso ** 2)
+        for entrada in entradas:
+            soma = soma + entrada
+
+        tipo = peso[1]
+        multiplicador = peso[0]
+
+        if tipo == "+":
+            resultado = soma + multiplicador
+
+        if tipo == "-":
+            resultado = soma - multiplicador
+
+        elif tipo == "*":
+            resultado = soma * multiplicador
+
+        elif tipo == "/":
+            if soma == 0:
+                soma = 0.1
+
+            if multiplicador == 0:
+                multiplicador = 0.1
+
+            resultado = soma / multiplicador
+
         return resultado
 
-    def rede(self):
+    def reden(self):
         '''Montador da rede neural'''
 
-        # Ande por todas as camadas
         for camada in range(0, len(self.rede)):
             novasEntradas = []
 
-            # Ande pela quantidade de neurônios da camada
             for neuronio in range(0, self.rede[camada]):
                 novasEntradas.append(
 
-                    # Aplique em o resultado em um neurônio
                     RedeNeural.neuronio(
                         self.pesos[camada][neuronio],
                         self.entradas))
 
             self.entradas = novasEntradas
 
-        # Retorne os pesos usados e o resultado
         return self.entradas
 
 class Treino():
-    def __init__(self,rede, intervalorMenor, intervaloMaior, esperado, entradas, geracoes
-):
-        self.intervalorMenor = intervalorMenor
-        self.intervaloMaior = intervaloMaior
-        self.esperado = esperado
-        self.entradas = entradas
-        self.geracoes = geracoes
-        self.rede = rede
 
-    def melhorRede(self, resultados, esperado):
+    def __init__(self):
+        pass
+
+    def melhorRede(self, conjuntoResultados, listaEsperado):
+        '''resultaod = [[{},{},{}],[{},{},{}]]
+        lst esperados [[20], [140], [164]]'''
+
         melhorResultadoPeso = []
+        somaMelhor = 0
 
-        for resultado in resultados:
+        for resultados in conjuntoResultados:
+            '''[{'saida'[4365]: 'pesos':[[12],[32]]},{'saida'[4365]: 'pesos':[[12],[32]]},{'saida'[4365]: 'pesos':[[12],[32]]}]'''
 
             if melhorResultadoPeso == []:
-                melhorResultadoPeso = resultado
+                melhorResultadoPeso = resultados
+
+                somaTestes = 0
+                for resultado in range(len(resultados)):
+                    '''{'saida'[4365]: 'pesos':[[12],[32]]}'''
+
+                    maior = resultados[resultado]['saida'][0]
+                    menor = listaEsperado[resultado][0]
+
+                    if menor > maior:
+                        a = maior
+                        maior = menor
+                        menor = a
+
+                    somaTestes = somaTestes + maior - menor
+
+                somaMelhor = somaTestes
+
             else:
+                somaTestes = 0
 
-                maior = resultado['saida'][0]
-                menor = esperado[0]
+                for resultado in range(len(resultados)):
 
-                if menor > maior:
-                    a = maior
-                    maior = menor
-                    menor = a
+                    maior = resultados[resultado]['saida'][0]
+                    menor = listaEsperado[resultado][0]
 
-                teste = maior - menor
+                    if menor > maior:
+                        a = maior
+                        maior = menor
+                        menor = a
 
-                if melhorResultadoPeso['saida'][0] > teste:
-                    melhorResultadoPeso = resultado
+                    somaTestes = somaTestes + maior - menor
 
-            return melhorResultadoPeso
+                if somaMelhor > somaTestes:
+                    melhorResultadoPeso = resultados
+                    somaMelhor = somaTestes
 
-    def gerarPesosAleatorios(self):
+        return [melhorResultadoPeso, somaMelhor]
+
+    def gerarPesosAleatorios(self, rede, intervalorMenor, intervaloMaior):
         pesos = []
 
-        for camada in self.rede:
+        possiveis = ["+","-","*","/"]
+
+        for camada in rede:
 
             pesosCamada = []
             for neuronio in range(0, camada):
 
-                sorteado = randint(self.intervalorMenor * 1000, self.intervaloMaior * 1000)
-                sorteado = sorteado / 1000
+                sorteado = randint(intervalorMenor, intervaloMaior)
+                tipo = choice(possiveis)
 
-                pesosCamada.append(sorteado)
+                pesosCamada.append([sorteado, tipo])
 
             pesos.append(pesosCamada)
 
         return pesos
 
-    def treinarRede(self):
+    def treinarRede(self, rede, intervalorMenor, intervaloMaior, listaEsperado, listaEntradas, geracoes):
 
         resultados = []
 
-        for geracao in range(0, self.geracoes):
-            pesos = Treino.gerarPesosAleatorios(self)
+        for geracao in range(geracoes):
 
-            neuronio = RedeNeural(self.rede, self.entradas, pesos)
-            resultados.append(neuronio.iniciar())
+            pesos = Treino.gerarPesosAleatorios(self, rede, intervalorMenor, intervaloMaior)
+    
+            tmp = []
 
-        return Treino.melhorRede(self, resultados, self.esperado)
+            for entradas in listaEntradas:
+                n = RedeNeural(rede, entradas, pesos)
+                tmp.append({'saida': n.reden(), 'pesos': pesos})
 
+            resultados.append(tmp)
+ 
+        return Treino.melhorRede(self, resultados, listaEsperado)
+class Otimizacao():
 
+    def __init__(self):
+        pass
 
-class Otimizar():
-    def __init__(self, rede, esperado, entradas, geracoes, melhorPeso, otimizacaoPor = 1):
-        self.otimizacaoPor = otimizacaoPor
-        self.melhorPeso = melhorPeso
-        self.esperado = esperado
-        self.entradas = entradas
-        self.geracoes = geracoes
-        self.rede = rede
+    def melhorRede(self, conjuntoResultados, listaEsperado):
+        #resultaod = [[{},{},{}],[{},{},{}]]
+        # lst esperados [[20], [140], [164]]
 
-    def melhorRede(self, resultados):
         melhorResultadoPeso = []
+        somaMelhor = 0
 
-        for resultado in resultados:
+        for resultados in conjuntoResultados:
+            # [{'saida'[4365]: 'pesos':[[12],[32]]},{'saida'[4365]: 'pesos':[[12],[32]]},{'saida'[4365]: 'pesos':[[12],[32]]}]
 
             if melhorResultadoPeso == []:
-                melhorResultadoPeso = resultado
+                melhorResultadoPeso = resultados
+
+                somaTestes = 0
+                for resultado in range(len(resultados)):
+                    # {'saida'[4365]: 'pesos':[[12],[32]]}
+
+                    maior = resultados[resultado]['saida'][0]
+                    menor = listaEsperado[resultado][0]
+
+                    if menor > maior:
+                        a = maior
+                        maior = menor
+                        menor = a
+
+                    somaTestes = somaTestes + maior - menor
+
+                somaMelhor = somaTestes
+
             else:
+                somaTestes = 0
 
-                maior = resultado['saida'][0]
-                menor = self.esperado[0]
+                for resultado in range(len(resultados)):
 
+                    maior = resultados[resultado]['saida'][0]
+                    menor = listaEsperado[resultado][0]
+
+                    if menor > maior:
+                        a = maior
+                        maior = menor
+                        menor = a
+
+                    somaTestes = somaTestes + maior - menor
+
+                if somaMelhor > somaTestes:
+                    melhorResultadoPeso = resultados
+                    somaMelhor = somaTestes
+
+        return [melhorResultadoPeso,somaMelhor]
+
+    def microPesosAleatorios(self, rede, escala, melhorPeso):
+        possiveis = ["+","-","*","/"]
+
+        pesos = []
+
+        for camada in range(len(rede)):
+
+            pesosCamada = []
+            for neuronio in range(0, rede[camada]):
+                #print(melhorPeso[camada][neuronio])
+                maior = melhorPeso[camada][neuronio][0] - melhorPeso[camada][neuronio][0] / escala
+                menor = melhorPeso[camada][neuronio][0] + melhorPeso[camada][neuronio][0] / escala
                 if menor > maior:
                     a = maior
                     maior = menor
                     menor = a
 
-                teste = maior - menor
+                sorteado = round(uniform(float(menor), float(maior)),5)
+                tipo = choice(possiveis)
 
-                if melhorResultadoPeso['saida'][0] > teste:
-                    melhorResultadoPeso = resultado
+                pesosCamada.append([sorteado, tipo])
 
-        return melhorResultadoPeso
-
-    def otimizarPesosAleatorios(self, melhorPeso):
-
-        pesos = []
-
-        for camada in range(0, len(self.rede)):
-
-            pesosCamada = []
-            for neuronio in range(0, self.rede[camada]):
-
-                if melhorPeso[camada][neuronio] < 0:
-                    menor = melhorPeso[camada][neuronio] + (
-                        melhorPeso[camada][neuronio] / self.otimizacaoPor)
-                    maior = melhorPeso[camada][neuronio] - (melhorPeso[
-                        camada][neuronio] / self.otimizacaoPor)
-                else:
-                    menor = melhorPeso[camada][neuronio] - (melhorPeso[
-                        camada][neuronio] / self.otimizacaoPor)
-                    maior = melhorPeso[camada][neuronio] + (melhorPeso[
-                        camada][neuronio] / self.otimizacaoPor)
-
-                sorteado = randint(int(menor * 1000), int(maior * 1000))
-                pesosCamada.append(sorteado / 1000)
             pesos.append(pesosCamada)
 
         return pesos
 
-    def otimizarRede(self):
-        if self.otimizacaoPor == 0:
-            self.otimizacaoPor = 1
+    def otimizarRede(self, rede, escala, listaEsperado, listaEntradas, geracoes, melhorPeso):
 
         resultados = []
 
-        for geracao in range(0, self.geracoes):
+        for geracao in range(geracoes):
 
-            pesos = Otimizar.otimizarPesosAleatorios(self, self.melhorPeso)
-            neuronio = RedeNeural(self.rede, self.entradas, pesos)
-            resultados.append({'saida': neuronio.iniciar(), 'pesos': pesos})
+            pesos = Otimizacao.microPesosAleatorios(self, rede, escala, melhorPeso)
+    
+            tmp = []
 
-       
-        return Otimizar.melhorRede(self, resultados)
+            for entradas in listaEntradas:
+                n = RedeNeural(rede, entradas, pesos)
+                tmp.append({'saida': n.reden(), 'pesos': pesos})
+
+            resultados.append(tmp)
+ 
+        return Otimizacao.melhorRede(self, resultados, listaEsperado)
+
+class MicroInfluencia():
+
+    def __init__(self):
+        pass
+
+    def melhorRede(self, conjuntoResultados, listaEsperado):
+        #resultaod = [[{},{},{}],[{},{},{}]]
+        # lst esperados [[20], [140], [164]]
+
+        melhorResultadoPeso = []
+        somaMelhor = 0
+
+        for resultados in conjuntoResultados:
+            # [{'saida'[4365]: 'pesos':[[12],[32]]},{'saida'[4365]: 'pesos':[[12],[32]]},{'saida'[4365]: 'pesos':[[12],[32]]}]
+
+            if melhorResultadoPeso == []:
+                melhorResultadoPeso = resultados
+
+                somaTestes = 0
+                for resultado in range(len(resultados)):
+                    # {'saida'[4365]: 'pesos':[[12],[32]]}
+
+                    maior = resultados[resultado]['saida'][0]
+                    menor = listaEsperado[resultado][0]
+
+                    if menor > maior:
+                        a = maior
+                        maior = menor
+                        menor = a
+
+                    somaTestes = somaTestes + maior - menor
+
+                somaMelhor = somaTestes
+
+            else:
+                somaTestes = 0
+
+                for resultado in range(len(resultados)):
+
+                    maior = resultados[resultado]['saida'][0]
+                    menor = listaEsperado[resultado][0]
 
 
+                    if menor > maior:
+                        a = maior
+                        maior = menor
+                        menor = a
+
+                    somaTestes = somaTestes + maior - menor
+
+                if somaMelhor > somaTestes:
+                    melhorResultadoPeso = resultados
+                    somaMelhor = somaTestes
+
+        return [melhorResultadoPeso,somaMelhor]
+
+
+    def analisarInfluencia(self, rede, listaEsperado, listaEntradas, melhorPeso):
+
+        resultados = []
+        for camada in range(len(melhorPeso)):
+            for neuronio in range(len(melhorPeso[camada])):
+         
+                numero = str(melhorPeso[camada][neuronio][0])
+                copia = melhorPeso[camada][neuronio][0]
+
+                for nchar in range(len(numero)):
+                    copiaOriginal = str(numero)
+
+                    for valor in range(0,10):
+                        if numero[nchar] == '.' or numero[nchar] == '-':
+                            break
+
+                        numero = numero[:nchar] + str(valor) + numero[nchar + 1:]
+
+                        melhorPeso[camada][neuronio][0] = float(numero)
+
+                        tmp = []
+                        for entradas in listaEntradas:
+                            n = RedeNeural(rede, entradas, melhorPeso)
+                            tmp.append({'saida': n.reden(), 'pesos': melhorPeso})
+
+                        resultados.append(tmp)
+
+                    numero = copiaOriginal
+
+                melhorPeso[camada][neuronio][0] = float(copia)
+
+        return MicroInfluencia.melhorRede(self, resultados, listaEsperado)
