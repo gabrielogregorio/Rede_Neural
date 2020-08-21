@@ -60,54 +60,50 @@ class Treino():
         pass
 
     def melhorRede(self, conjuntoResultados, listaEsperado):
-        '''resultaod = [[{},{},{}],[{},{},{}]]
-        lst esperados [[20], [140], [164]]'''
-
         melhorResultadoPeso = []
-        somaMelhor = 0
 
-        for resultados in conjuntoResultados:
-            '''[{'saida'[4365]: 'pesos':[[12],[32]]},{'saida'[4365]: 'pesos':[[12],[32]]},{'saida'[4365]: 'pesos':[[12],[32]]}]'''
-
+        for geracao in range(len(conjuntoResultados)):
             if melhorResultadoPeso == []:
-                melhorResultadoPeso = resultados
+                somaMelhor = 0
+                melhorResultadoPeso = conjuntoResultados[geracao]
 
-                somaTestes = 0
-                for resultado in range(len(resultados)):
-                    '''{'saida'[4365]: 'pesos':[[12],[32]]}'''
+                for entrada in range(len(conjuntoResultados[geracao])):
+                    for esperado in range(len(listaEsperado[geracao])):
+                        s = listaEsperado[geracao]
+                        l = conjuntoResultados[geracao][entrada]['saida']
 
-                    maior = resultados[resultado]['saida'][0]
-                    menor = listaEsperado[resultado][0]
+                        for p in range(len(l)):
+                            x = l[p]
+                            y = s[p]
 
-                    if menor > maior:
-                        a = maior
-                        maior = menor
-                        menor = a
+                            if x > y:
+                                somaMelhor = somaMelhor + (x - y)
+                                continue
 
-                    somaTestes = somaTestes + maior - menor
-
-                somaMelhor = somaTestes
-
+                            somaMelhor = somaMelhor + (y - x)
             else:
-                somaTestes = 0
 
-                for resultado in range(len(resultados)):
+                somaMelhor = 0
+                for entrada in range(len(conjuntoResultados[geracao])):
+                    for esperado in range(len(listaEsperado[geracao])):
+                        s = listaEsperado[geracao]
+                        l = conjuntoResultados[geracao][entrada]['saida']
 
-                    maior = resultados[resultado]['saida'][0]
-                    menor = listaEsperado[resultado][0]
+                        for p in range(len(l)):
+                            x = l[p]
+                            y = s[p]
 
-                    if menor > maior:
-                        a = maior
-                        maior = menor
-                        menor = a
+                            if x > y:
+                                somaMelhor = somaMelhor + (x - y)
+                                continue
 
-                    somaTestes = somaTestes + maior - menor
+                            somaMelhor = somaMelhor + (y - x)
 
                 if somaMelhor > somaTestes:
-                    melhorResultadoPeso = resultados
+                    melhorResultadoPeso = conjuntoResultados[geracao]
                     somaMelhor = somaTestes
 
-        return [melhorResultadoPeso, somaMelhor]
+            return [melhorResultadoPeso,somaMelhor]
 
     def gerarPesosAleatorios(self, rede, intervalorMenor, intervaloMaior):
         pesos = []
@@ -145,60 +141,58 @@ class Treino():
             resultados.append(tmp)
  
         return Treino.melhorRede(self, resultados, listaEsperado)
+
 class Otimizacao():
 
     def __init__(self):
         pass
 
+
     def melhorRede(self, conjuntoResultados, listaEsperado):
-        #resultaod = [[{},{},{}],[{},{},{}]]
-        # lst esperados [[20], [140], [164]]
-
         melhorResultadoPeso = []
-        somaMelhor = 0
 
-        for resultados in conjuntoResultados:
-            # [{'saida'[4365]: 'pesos':[[12],[32]]},{'saida'[4365]: 'pesos':[[12],[32]]},{'saida'[4365]: 'pesos':[[12],[32]]}]
-
+        for geracao in range(len(conjuntoResultados)):
             if melhorResultadoPeso == []:
-                melhorResultadoPeso = resultados
+                somaMelhor = 0
+                melhorResultadoPeso = conjuntoResultados[geracao]
 
-                somaTestes = 0
-                for resultado in range(len(resultados)):
-                    # {'saida'[4365]: 'pesos':[[12],[32]]}
+                for entrada in range(len(conjuntoResultados[geracao])):
+                    for esperado in range(len(listaEsperado[geracao])):
+                        s = listaEsperado[geracao]
+                        l = conjuntoResultados[geracao][entrada]['saida']
 
-                    maior = resultados[resultado]['saida'][0]
-                    menor = listaEsperado[resultado][0]
+                        for p in range(len(l)):
+                            x = l[p]
+                            y = s[p]
 
-                    if menor > maior:
-                        a = maior
-                        maior = menor
-                        menor = a
+                            if x > y:
+                                somaMelhor = somaMelhor + (x - y)
+                                continue
 
-                    somaTestes = somaTestes + maior - menor
-
-                somaMelhor = somaTestes
-
+                            somaMelhor = somaMelhor + (y - x)
             else:
-                somaTestes = 0
 
-                for resultado in range(len(resultados)):
+                somaMelhor = 0
+                for entrada in range(len(conjuntoResultados[geracao])):
+                    for esperado in range(len(listaEsperado[geracao])):
+                        s = listaEsperado[geracao]
+                        l = conjuntoResultados[geracao][entrada]['saida']
 
-                    maior = resultados[resultado]['saida'][0]
-                    menor = listaEsperado[resultado][0]
+                        for p in range(len(l)):
+                            x = l[p]
+                            y = s[p]
 
-                    if menor > maior:
-                        a = maior
-                        maior = menor
-                        menor = a
+                            if x > y:
+                                somaMelhor = somaMelhor + (x - y)
+                                continue
 
-                    somaTestes = somaTestes + maior - menor
+                            somaMelhor = somaMelhor + (y - x)
 
                 if somaMelhor > somaTestes:
-                    melhorResultadoPeso = resultados
+                    melhorResultadoPeso = conjuntoResultados[geracao]
                     somaMelhor = somaTestes
 
-        return [melhorResultadoPeso,somaMelhor]
+            return [melhorResultadoPeso,somaMelhor]
 
     def microPesosAleatorios(self, rede, escala, melhorPeso):
         possiveis = ["+","-","*","/"]
@@ -250,56 +244,50 @@ class MicroInfluencia():
         pass
 
     def melhorRede(self, conjuntoResultados, listaEsperado):
-        #resultaod = [[{},{},{}],[{},{},{}]]
-        # lst esperados [[20], [140], [164]]
-
         melhorResultadoPeso = []
-        somaMelhor = 0
 
-        for resultados in conjuntoResultados:
-            # [{'saida'[4365]: 'pesos':[[12],[32]]},{'saida'[4365]: 'pesos':[[12],[32]]},{'saida'[4365]: 'pesos':[[12],[32]]}]
-
+        for geracao in range(len(conjuntoResultados)):
             if melhorResultadoPeso == []:
-                melhorResultadoPeso = resultados
+                somaMelhor = 0
+                melhorResultadoPeso = conjuntoResultados[geracao]
 
-                somaTestes = 0
-                for resultado in range(len(resultados)):
-                    # {'saida'[4365]: 'pesos':[[12],[32]]}
+                for entrada in range(len(conjuntoResultados[geracao])):
+                    for esperado in range(len(listaEsperado[geracao])):
+                        s = listaEsperado[geracao]
+                        l = conjuntoResultados[geracao][entrada]['saida']
 
-                    maior = resultados[resultado]['saida'][0]
-                    menor = listaEsperado[resultado][0]
+                        for p in range(len(l)):
+                            x = l[p]
+                            y = s[p]
 
-                    if menor > maior:
-                        a = maior
-                        maior = menor
-                        menor = a
+                            if x > y:
+                                somaMelhor = somaMelhor + (x - y)
+                                continue
 
-                    somaTestes = somaTestes + maior - menor
-
-                somaMelhor = somaTestes
-
+                            somaMelhor = somaMelhor + (y - x)
             else:
-                somaTestes = 0
 
-                for resultado in range(len(resultados)):
+                somaMelhor = 0
+                for entrada in range(len(conjuntoResultados[geracao])):
+                    for esperado in range(len(listaEsperado[geracao])):
+                        s = listaEsperado[geracao]
+                        l = conjuntoResultados[geracao][entrada]['saida']
 
-                    maior = resultados[resultado]['saida'][0]
-                    menor = listaEsperado[resultado][0]
+                        for p in range(len(l)):
+                            x = l[p]
+                            y = s[p]
 
+                            if x > y:
+                                somaMelhor = somaMelhor + (x - y)
+                                continue
 
-                    if menor > maior:
-                        a = maior
-                        maior = menor
-                        menor = a
-
-                    somaTestes = somaTestes + maior - menor
+                            somaMelhor = somaMelhor + (y - x)
 
                 if somaMelhor > somaTestes:
-                    melhorResultadoPeso = resultados
+                    melhorResultadoPeso = conjuntoResultados[geracao]
                     somaMelhor = somaTestes
 
-        return [melhorResultadoPeso,somaMelhor]
-
+            return [melhorResultadoPeso,somaMelhor]
 
     def analisarInfluencia(self, rede, listaEsperado, listaEntradas, melhorPeso):
 
